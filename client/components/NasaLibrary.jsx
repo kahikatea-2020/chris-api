@@ -8,7 +8,28 @@ class NasaLibrary extends Component {
     this.state = {
       photos: [],
       minDisplayCount: 0,
-      maxDisplayCount: 10,
+      maxDisplayCount: 9,
+    }
+  }
+  prevPage = () => {
+    if (this.state.minDisplayCount > 10) {
+      this.setState({
+        minDisplayCount: this.state.minDisplayCount - 10,
+        maxDisplayCount: this.state.maxDisplayCount - 10,
+      })
+    }
+  }
+  nextPage = () => {
+    if (this.state.maxDisplayCount < this.state.photos.length - 10) {
+      this.setState(
+        {
+          minDisplayCount: this.state.minDisplayCount + 10,
+          maxDisplayCount: this.state.maxDisplayCount + 10,
+        },
+        () => {
+          console.log(this.state)
+        }
+      )
     }
   }
   componentDidMount() {
@@ -27,21 +48,28 @@ class NasaLibrary extends Component {
     return (
       <>
         <div>Hello world!</div>
-        {this.state.photos
-          .filter((photo, index) => {
-            return (
-              index >= this.state.minDisplayCount &&
-              index <= this.state.maxDisplayCount
-            )
-          })
-          .map((photo) => {
-            return (
-              <img
-                src={photo.img_src}
-                alt={`Photo on mars taken by ${photo.camera.full_name}`}
-              />
-            )
-          })}
+        <div className='galleryContainer'>
+          {this.state.photos
+            .filter((photo, index) => {
+              return (
+                index >= this.state.minDisplayCount &&
+                index <= this.state.maxDisplayCount
+              )
+            })
+            .map((photo) => {
+              return (
+                <div className='imgContainer'>
+                  <img
+                    className='image'
+                    src={photo.img_src}
+                    alt={`Photo on mars taken by ${photo.camera.full_name}`}
+                  />
+                </div>
+              )
+            })}
+        </div>
+        <button onClick={this.prevPage}>Prev</button>
+        <button onClick={this.nextPage}>Next</button>
       </>
     )
   }
