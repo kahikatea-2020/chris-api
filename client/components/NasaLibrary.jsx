@@ -7,35 +7,41 @@ class NasaLibrary extends Component {
     super(props)
     this.state = {
       photos: [],
+      minDisplayCount: 0,
+      maxDisplayCount: 10,
     }
   }
   componentDidMount() {
-    request
-      .get("http://localhost:3000/api/getPictures")
-      .then((response) => {
-        let responseObject = JSON.parse(JSON.parse(response.text))
+    request.get("http://localhost:3000/api/getPictures").then((response) => {
+      let responseObject = JSON.parse(JSON.parse(response.text))
 
-        let joined = this.state.photos.concat(responseObject.photos[0])
+      responseObject.photos.forEach((imageObj, index) => {
+        let joined = this.state.photos.concat(imageObj)
         this.setState({
           photos: joined,
         })
       })
-      .then(() => {
-        console.log(this.state.photos)
-      })
+    })
   }
   render() {
     return (
       <>
         <div>Hello world!</div>
-        {this.state.photos.map((photo) => {
-          return (
-            <img
-              src={photo.img_src}
-              alt={`Photo on mars taken by ${photo.camera.full_name}`}
-            />
-          )
-        })}
+        {this.state.photos
+          .filter((photo, index) => {
+            return (
+              index >= this.state.minDisplayCount &&
+              index <= this.state.maxDisplayCount
+            )
+          })
+          .map((photo) => {
+            return (
+              <img
+                src={photo.img_src}
+                alt={`Photo on mars taken by ${photo.camera.full_name}`}
+              />
+            )
+          })}
       </>
     )
   }
